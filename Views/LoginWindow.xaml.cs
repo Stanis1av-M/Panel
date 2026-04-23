@@ -66,29 +66,29 @@ namespace Panel.Views
                 MessageBox.Show("Введите корректный формат Email (например, admin@world.com).", "Ошибка формата", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-           
 
             try
             {
-                // 3. Подключаемся к базе данных
                 using (var db = new AppDbContext())
                 {
                     var user = db.Users
                                  .Include(u => u.Role)
                                  .FirstOrDefault(u => u.Email == email && u.Password == password);
 
-                    // 4. Проверяем результат
                     if (user != null)
                     {
                         if (user.Role.Name == "Администратор" || user.Role.Name == "Менеджер")
                         {
+                          
+                            UserSession.CurrentUser = user;
+
                             MainWindow main = new MainWindow(user);
                             main.Show();
                             this.Close();
                         }
                         else
                         {
-                            MessageBox.Show("Доступ запрещен. У вас нет прав Администратора или Менеджера. Запросите права у Админа для редактирования", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show("Доступ запрещен...", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
                     else
@@ -99,7 +99,7 @@ namespace Panel.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Не удалось подключиться к базе данных.\nОшибка: {ex.Message}", "Критическая ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка: {ex.Message}", "Критическая ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
