@@ -1,0 +1,78 @@
+﻿<Page x:Class="Panel.Views.Pages.InventoryPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="InventoryPage" Background="#F0F2F5" FontFamily="Segoe UI"
+      TextOptions.TextFormattingMode="Display" SnapsToDevicePixels="True">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <UniformGrid Grid.Row="0" Columns="3" Margin="0,0,0,15">
+            <Border Background="#4CD137" CornerRadius="10" Padding="15" Margin="0,0,10,0">
+                <StackPanel>
+                    <TextBlock Text="ВСЕГО ПОЗИЦИЙ" Foreground="White" FontSize="11" FontWeight="Bold" Opacity="0.8"/>
+                    <TextBlock x:Name="txtTotalPositions" Text="0" Foreground="White" FontSize="24" FontWeight="Bold"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#00A8FF" CornerRadius="10" Padding="15" Margin="5,0,5,0">
+                <StackPanel>
+                    <TextBlock Text="ОБЩЕЕ КОЛ-ВО ЕД." Foreground="White" FontSize="11" FontWeight="Bold" Opacity="0.8"/>
+                    <TextBlock x:Name="txtTotalUnits" Text="0" Foreground="White" FontSize="24" FontWeight="Bold"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#E84118" CornerRadius="10" Padding="15" Margin="10,0,0,0">
+                <StackPanel>
+                    <TextBlock Text="ДЕФИЦИТ (МЕНЕЕ 5 ШТ.)" Foreground="White" FontSize="11" FontWeight="Bold" Opacity="0.8"/>
+                    <TextBlock x:Name="txtLowStockCount" Text="0" Foreground="White" FontSize="24" FontWeight="Bold"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15" Margin="0,0,0,15">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Margin="0,0,20,0">
+                    <TextBlock Text="Поиск по названию/артикулу:" FontSize="11" Foreground="#A4B0BE" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtSearch" Width="250" Height="32" VerticalContentAlignment="Center" TextChanged="FilterChanged"/>
+                </StackPanel>
+                <CheckBox x:Name="chkOnlyLowStock" Content="Показать только дефицит" VerticalAlignment="Bottom" Margin="0,0,0,8" Click="FilterChanged"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Background="White" CornerRadius="10" Padding="10">
+            <DataGrid x:Name="GridInventory" AutoGenerateColumns="False" IsReadOnly="True" 
+                      GridLinesVisibility="None" RowHeight="45" Background="Transparent" BorderThickness="0">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Артикул" Binding="{Binding Article}" Width="100"/>
+                    <DataGridTextColumn Header="Наименование товара" Binding="{Binding Name}" Width="*"/>
+                    <DataGridTextColumn Header="Категория" Binding="{Binding Category.Name}" Width="150"/>
+
+                    <DataGridTemplateColumn Header="Остаток на складе" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border x:Name="StockBadge" CornerRadius="5" Padding="10,4" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding Stock}" FontWeight="Bold" VerticalAlignment="Center"/>
+                                </Border>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsLowStock}" Value="True">
+                                        <Setter TargetName="StockBadge" Property="Background" Value="#FFDADA"/>
+                                        <Setter TargetName="StockBadge" Property="TextBlock.Foreground" Value="#E84118"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsLowStock}" Value="False">
+                                        <Setter TargetName="StockBadge" Property="Background" Value="#DFF9FB"/>
+                                        <Setter TargetName="StockBadge" Property="TextBlock.Foreground" Value="#00A8FF"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </Grid>
+</Page>

@@ -1,0 +1,31 @@
+﻿<Window x:Class="Panel.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Авторизация - Apex Shop" Height="400" Width="350" 
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Background="#F5F6FA">
+    
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="APEX TOURS" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,10,0,5" Foreground="#2F3640"/>
+        <TextBlock Grid.Row="1" Text="Вход для сотрудников" FontSize="14" HorizontalAlignment="Center" Margin="0,0,0,30" Foreground="#718093"/>
+
+        <TextBlock Grid.Row="2" Text="Email:" Margin="0,0,0,5" FontWeight="SemiBold" Foreground="#2F3640"/>
+        <TextBox Grid.Row="3" x:Name="txtEmail" Height="35" Margin="0,0,0,15" Padding="5" FontSize="14" MaxLength="80"/>
+
+        <TextBlock Grid.Row="4" Text="Пароль:" Margin="0,0,0,5" FontWeight="SemiBold" Foreground="#2F3640"/>
+        <PasswordBox Grid.Row="5" x:Name="txtPassword" Height="35" Margin="0,0,0,25" Padding="5" FontSize="14" MaxLength="30"/>
+
+        <Button Grid.Row="6" x:Name="btnLogin" Content="ВОЙТИ" Height="40" VerticalAlignment="Top" 
+                Background="#00A8FF" Foreground="White" FontWeight="Bold" FontSize="14" BorderThickness="0"
+                Click="BtnLogin_Click"/>
+    </Grid>
+</Window>
