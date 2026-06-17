@@ -16,7 +16,18 @@ namespace Panel.Views
         public SupplyAddItemWindow()
         {
             InitializeComponent();
-            cmbProduct.ItemsSource = _db.Products.ToList();
+
+            try
+            {
+                cmbProduct.ItemsSource = _db.Products.Where(p => p.IsVisible).ToList();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Не удалось загрузить список товаров: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            this.Closed += (s, e) => _db.Dispose();
         }
 
         // --- ВАЛИДАЦИЯ ВВОДА ---
@@ -60,17 +71,17 @@ namespace Panel.Views
                 return;
             }
 
-            // Валидация количества (> 0)
-            if (!int.TryParse(txtQuantity.Text, out int qty) || qty <= 0)
+            // Валидация количества (больше нуля, разумный верхний предел)
+            if (!int.TryParse(txtQuantity.Text, out int qty) || qty <= 0 || qty > 100000)
             {
-                MessageBox.Show("Количество должно быть больше нуля!", "Ошибка валидации");
+                MessageBox.Show("Количество должно быть от 1 до 100 000!", "Ошибка валидации");
                 return;
             }
 
-            // Валидация цены (> 0)
-            if (!decimal.TryParse(txtUnitPrice.Text, out decimal unitPrice) || unitPrice <= 0)
+            // Валидация цены (больше нуля, разумный верхний предел)
+            if (!decimal.TryParse(txtUnitPrice.Text, out decimal unitPrice) || unitPrice <= 0 || unitPrice > 10000000)
             {
-                MessageBox.Show("Цена за единицу должна быть больше нуля!", "Ошибка валидации");
+                MessageBox.Show("Цена за единицу должна быть от 0 до 10 000 000!", "Ошибка валидации");
                 return;
             }
 

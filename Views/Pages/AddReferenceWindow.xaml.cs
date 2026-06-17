@@ -16,6 +16,8 @@ namespace Panel.Views
             InitializeComponent();
             _tableName = tableName;
             SetupUI();
+
+            this.Closed += (s, e) => _db.Dispose();
         }
 
         private void SetupUI()
@@ -68,12 +70,11 @@ namespace Panel.Views
                 return;
             }
 
-            // 2. Валидация: Ограничение длины текста (миллион символов) для всех полей
-            // Это дополнительная проверка перед отправкой в БД
-            if (txtName.Text.Length > 1000000 || txtCountry.Text.Length > 1000000 ||
-                txtContacts.Text.Length > 1000000 || txtAddress.Text.Length > 1000000)
+            // 2. Валидация: разумное ограничение длины текста для всех полей
+            if (txtName.Text.Length > 255 || txtCountry.Text.Length > 255 ||
+                txtContacts.Text.Length > 500 || txtAddress.Text.Length > 500)
             {
-                MessageBox.Show("Превышено ограничение по количеству символов (макс. 1 000 000)!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Превышено ограничение по количеству символов (название/страна — до 255, контакты/адрес — до 500)!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 

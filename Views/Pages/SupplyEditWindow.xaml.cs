@@ -17,8 +17,20 @@ namespace Panel.Views
         {
             InitializeComponent();
             _userId = userId;
-            cmbSupplier.ItemsSource = _db.Suppliers.ToList();
+
+            try
+            {
+                cmbSupplier.ItemsSource = _db.Suppliers.ToList();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Не удалось загрузить список поставщиков: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
             GridSupplyItems.ItemsSource = _items;
+
+            this.Closed += (s, e) => _db.Dispose();
         }
 
         private void BtnAddItem_Click(object sender, RoutedEventArgs e)
@@ -84,6 +96,7 @@ namespace Panel.Views
                 _db.SaveChanges();
                 MessageBox.Show("Поставка успешно сформирована!");
                 this.DialogResult = true;
+                this.Close();
             }
             catch (Exception ex)
             {

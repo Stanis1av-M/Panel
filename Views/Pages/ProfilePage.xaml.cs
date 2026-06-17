@@ -16,6 +16,7 @@ namespace Panel.Views.Pages
         public ProfilePage()
         {
             InitializeComponent();
+            this.Unloaded += (s, e) => _db.Dispose();
 
             if (UserSession.CurrentUser == null)
             {
@@ -73,9 +74,22 @@ namespace Panel.Views.Pages
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
+            if (_user == null)
+            {
+                MessageBox.Show("Не удалось определить пользователя. Перезайдите в приложение.", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(txtFullName.Text))
             {
                 MessageBox.Show("ФИО не может быть пустым!", "Внимание");
+                return;
+            }
+
+            if (txtFullName.Text.Length > 150)
+            {
+                MessageBox.Show("ФИО не может быть длиннее 150 символов!", "Внимание");
                 return;
             }
 

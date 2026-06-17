@@ -17,6 +17,7 @@ namespace Panel.Views.Pages
         public DictionariesPage()
         {
             InitializeComponent();
+            this.Unloaded += (s, e) => _db.Dispose();
         }
 
         // 1. ИСПРАВЛЕНИЕ: Логика скрытия связей и настройки галочек
@@ -86,7 +87,9 @@ namespace Panel.Views.Pages
         {
             try
             {
-                // Пересоздаем контекст, чтобы сбросить ошибки и кэш
+                // Освобождаем предыдущий контекст перед пересозданием, чтобы не копить
+                // открытые соединения с БД при каждом переключении справочника.
+                _db.Dispose();
                 _db = new AppDbContext();
 
                 switch (_currentTable)
@@ -105,8 +108,82 @@ namespace Panel.Views.Pages
             }
         }
 
+        // Проверка перед сохранением: пустые названия и отрицательные цены не пропускаем в БД,
+        // так как редактирование идёт прямо в ячейках DataGrid без отдельной формы.
+        private bool ValidateBeforeSave(out string errorMessage)
+        {
+            errorMessage = "";
+
+            switch (_currentTable)
+            {
+                case "Categories":
+                    if (_db.Categories.Local.Any(c => string.IsNullOrWhiteSpace(c.Name)))
+                    {
+                        errorMessage = "Наименование категории не может быть пустым!";
+                        return false;
+                    }
+                    break;
+
+                case "Manufacturers":
+                    if (_db.Manufacturers.Local.Any(m => string.IsNullOrWhiteSpace(m.Name)))
+                    {
+                        errorMessage = "Наименование производителя не может быть пустым!";
+                        return false;
+                    }
+                    break;
+
+                case "Suppliers":
+                    if (_db.Suppliers.Local.Any(s => string.IsNullOrWhiteSpace(s.Name)))
+                    {
+                        errorMessage = "Наименование поставщика не может быть пустым!";
+                        return false;
+                    }
+                    break;
+
+                case "Statuses":
+                    if (_db.OrderStatuses.Local.Any(s => string.IsNullOrWhiteSpace(s.Name)))
+                    {
+                        errorMessage = "Название статуса не может быть пустым!";
+                        return false;
+                    }
+                    break;
+
+                case "Delivery":
+                    if (_db.DeliveryMethods.Local.Any(d => string.IsNullOrWhiteSpace(d.Name)))
+                    {
+                        errorMessage = "Название способа доставки не может быть пустым!";
+                        return false;
+                    }
+                    if (_db.DeliveryMethods.Local.Any(d => d.Price < 0 || d.Price > 1000000))
+                    {
+                        errorMessage = "Стоимость доставки должна быть от 0 до 1 000 000 рублей!";
+                        return false;
+                    }
+                    break;
+
+                case "Payment":
+                    if (_db.PaymentMethods.Local.Any(p => string.IsNullOrWhiteSpace(p.Name)))
+                    {
+                        errorMessage = "Название способа оплаты не может быть пустым!";
+                        return false;
+                    }
+                    break;
+            }
+
+            return true;
+        }
+
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
+            // Обязательно подтверждаем правки в ячейках, иначе изменения могут не попасть в Local
+            GridData.CommitEdit(DataGridEditingUnit.Row, true);
+
+            if (!ValidateBeforeSave(out string errorMessage))
+            {
+                MessageBox.Show(errorMessage, "Проверка данных", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             try
             {
                 _db.SaveChanges();

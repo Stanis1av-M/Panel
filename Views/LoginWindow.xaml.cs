@@ -77,18 +77,18 @@ namespace Panel.Views
 
                     if (user != null)
                     {
-                        if (user.Role.Name == "Администратор" || user.Role.Name == "Менеджер")
+                        if (user.Ban)
                         {
-                          
+                            MessageBox.Show("Этот аккаунт заблокирован. Обратитесь к администратору.", "Доступ запрещён",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        else
+                        {
                             UserSession.CurrentUser = user;
 
                             MainWindow main = new MainWindow(user);
                             main.Show();
                             this.Close();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Доступ запрещен...", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
                     else

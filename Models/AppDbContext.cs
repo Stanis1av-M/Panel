@@ -15,6 +15,8 @@ public partial class AppDbContext : DbContext
     {
     }
 
+    public virtual DbSet<AiSetting> AiSettings { get; set; }
+
     public virtual DbSet<CartItem> CartItems { get; set; }
 
     public virtual DbSet<Category> Categories { get; set; }
@@ -67,6 +69,13 @@ public partial class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AiSetting>(entity =>
+        {
+            entity.Property(e => e.ProviderName).HasMaxLength(100);
+            entity.Property(e => e.ApiKey).HasMaxLength(500);
+            entity.Property(e => e.ApiUrl).HasMaxLength(500);
+        });
+
         modelBuilder.Entity<CartItem>(entity =>
         {
             entity.HasIndex(e => e.ProductId, "IX_CartItems_ProductId");

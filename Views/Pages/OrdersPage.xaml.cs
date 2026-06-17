@@ -113,7 +113,8 @@ namespace Panel.Views.Pages
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ошибка обновления списка: {ex.Message}");
+                MessageBox.Show($"Не удалось обновить список заказов: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

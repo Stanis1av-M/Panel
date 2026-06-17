@@ -50,6 +50,8 @@ namespace Panel.Views
                 _currentProduct.ImageUrl = _placeholderPath; // Ставим заглушку по умолчанию
                 LoadImagePreview(_placeholderPath);
             }
+
+            this.Closed += (s, e) => _db.Dispose();
         }
 
         // Метод для безопасного отображения картинки
@@ -101,8 +103,17 @@ namespace Panel.Views
 
             if (openFileDialog.ShowDialog() == true)
             {
-                _selectedImagePath = openFileDialog.FileName;
-                imgPreview.Source = new BitmapImage(new Uri(_selectedImagePath));
+                try
+                {
+                    var bitmap = new BitmapImage(new Uri(openFileDialog.FileName));
+                    imgPreview.Source = bitmap;
+                    _selectedImagePath = openFileDialog.FileName;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Не удалось открыть выбранное изображение: {ex.Message}", "Ошибка",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
             }
         }
 
@@ -120,6 +131,13 @@ namespace Panel.Views
             if (string.IsNullOrWhiteSpace(txtName.Text) || txtName.Text.Length > 50)
             {
                 MessageBox.Show("Название должно быть от 1 до 50 символов!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Артикул: обязателен, до 30 символов (ограничение в базе данных)
+            if (string.IsNullOrWhiteSpace(txtArticle.Text) || txtArticle.Text.Length > 30)
+            {
+                MessageBox.Show("Артикул должен быть от 1 до 30 символов!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -163,26 +181,26 @@ namespace Panel.Views
             _currentProduct.CategoryId = (int)cmbCategory.SelectedValue;
             _currentProduct.ManufacturerId = (int)cmbManufacturer.SelectedValue;
 
-            // Обработка картинки по ТЗ
-            if (_selectedImagePath != null)
-            {
-                // ТЗ требует папку ProductImages
-                string destFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ProductImages");
-                if (!Directory.Exists(destFolder)) Directory.CreateDirectory(destFolder);
-
-                string ext = Path.GetExtension(_selectedImagePath);
-                string newFileName = Guid.NewGuid().ToString() + ext;
-                string destFilePath = Path.Combine(destFolder, newFileName);
-
-                File.Copy(_selectedImagePath, destFilePath, true);
-                _currentProduct.ImageUrl = "/ProductImages/" + newFileName;
-            }
-
-            if (_currentProduct.ProductId == 0)
-                _db.Products.Add(_currentProduct);
-
             try
             {
+                // Обработка картинки по ТЗ
+                if (_selectedImagePath != null)
+                {
+                    // ТЗ требует папку ProductImages
+                    string destFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ProductImages");
+                    if (!Directory.Exists(destFolder)) Directory.CreateDirectory(destFolder);
+
+                    string ext = Path.GetExtension(_selectedImagePath);
+                    string newFileName = Guid.NewGuid().ToString() + ext;
+                    string destFilePath = Path.Combine(destFolder, newFileName);
+
+                    File.Copy(_selectedImagePath, destFilePath, true);
+                    _currentProduct.ImageUrl = "/ProductImages/" + newFileName;
+                }
+
+                if (_currentProduct.ProductId == 0)
+                    _db.Products.Add(_currentProduct);
+
                 _db.SaveChanges();
                 MessageBox.Show("Товар успешно сохранен!", "Успех");
                 this.DialogResult = true;

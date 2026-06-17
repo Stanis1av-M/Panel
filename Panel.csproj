@@ -18,11 +18,21 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="QRCoder" Version="1.8.0" />
+    <PackageReference Include="QuestPDF" Version="2026.6.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="images\products\" />
     <Folder Include="ico\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Фото товаров копируются в bin/.../images/products при каждой сборке,
+         иначе пути вида "/images/products/palatka.png" из Products.ImageUrl
+         не найдутся во время выполнения. -->
+    <Content Include="images\products\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

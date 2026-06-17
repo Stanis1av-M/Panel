@@ -19,10 +19,35 @@ namespace Panel.Views
             UpdateHeaderInfo();
 
             // 3. ОГРАНИЧЕНИЕ ПРАВ
-            if (_currentUser.Role?.Name != "Администратор")
+            bool isAdmin = _currentUser.Role?.Name == "Администратор";
+            bool isManager = _currentUser.Role?.Name == "Менеджер";
+            bool isStaff = isAdmin || isManager;
+
+            if (!isAdmin)
             {
                 btnAdminPanel.Visibility = Visibility.Collapsed;
-                btnAddUser.Visibility = Visibility.Collapsed; 
+                btnAddUser.Visibility = Visibility.Collapsed;
+            }
+
+            // Заказы, Поставки, Склад и управление Товарами — только для админа и менеджера.
+            // Обычные клиенты (и гиды) работают через витрину "Магазин".
+            if (!isStaff)
+            {
+                btnProducts.Visibility = Visibility.Collapsed;
+                btnOrders.Visibility = Visibility.Collapsed;
+                btnSupplies.Visibility = Visibility.Collapsed;
+                btnInventory.Visibility = Visibility.Collapsed;
+
+                // Обычному пользователю показываем магазин сразу, а не пустой экран
+                try
+                {
+                    MainFrame.Navigate(new Pages.ShopPage(_currentUser));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Не удалось открыть магазин: {ex.Message}", "Ошибка",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -48,6 +73,19 @@ namespace Panel.Views
             }
         }
 
+        private void BtnShop_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                MainFrame.Navigate(new Pages.ShopPage(_currentUser));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки магазина: {ex.Message}\n\n{ex.InnerException?.Message}",
+                                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void BtnProducts_Click(object sender, RoutedEventArgs e)
         {
             MainFrame.Navigate(new Pages.ProductsPage());
@@ -61,6 +99,21 @@ namespace Panel.Views
         private void BtnInventory_Click(object sender, RoutedEventArgs e)
         {
             MainFrame.Navigate(new Panel.Views.Pages.InventoryPage());
+        }
+
+        private void BtnAiChat_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var chatWindow = new AiChatWindow();
+                chatWindow.Owner = this;
+                chatWindow.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Не удалось открыть чат с нейросетью: {ex.Message}", "Ошибка",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void btnAdminPanel_Click(object sender, RoutedEventArgs e)

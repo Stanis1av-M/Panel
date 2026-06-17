@@ -64,5 +64,75 @@ namespace Panel.Views.Pages
             }
             else MessageBox.Show("Выберите товар.");
         }
+
+        private void BtnDeleteProduct_Click(object sender, RoutedEventArgs e)
+        {
+            if (GridProducts.SelectedItem is not Product selected)
+            {
+                MessageBox.Show("Выберите товар.");
+                return;
+            }
+
+            if (!selected.IsVisible)
+            {
+                MessageBox.Show("Этот товар уже удалён.", "Внимание", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var confirm = MessageBox.Show(
+                $"Удалить товар \"{selected.Name}\" из магазина?\nТовар будет скрыт от клиентов, но останется в базе (для истории заказов).",
+                "Подтверждение удаления",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (confirm != MessageBoxResult.Yes) return;
+
+            try
+            {
+                using (var db = new AppDbContext())
+                {
+                    var product = db.Products.First(p => p.ProductId == selected.ProductId);
+                    product.IsVisible = false;
+                    db.SaveChanges();
+                }
+                LoadData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Не удалось удалить товар: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void BtnRestoreProduct_Click(object sender, RoutedEventArgs e)
+        {
+            if (GridProducts.SelectedItem is not Product selected)
+            {
+                MessageBox.Show("Выберите товар.");
+                return;
+            }
+
+            if (selected.IsVisible)
+            {
+                MessageBox.Show("Этот товар уже активен.", "Внимание", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            try
+            {
+                using (var db = new AppDbContext())
+                {
+                    var product = db.Products.First(p => p.ProductId == selected.ProductId);
+                    product.IsVisible = true;
+                    db.SaveChanges();
+                }
+                LoadData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Не удалось восстановить товар: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
 }
