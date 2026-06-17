@@ -3,11 +3,10 @@ using panel.Models;
 using System;
 using System.Linq;
 using System.Windows;
-using System.Text.RegularExpressions; 
+using System.Text.RegularExpressions;
 
 namespace Panel.Views
 {
-   
     public partial class LoginWindow : Window
     {
         public LoginWindow()
@@ -15,7 +14,6 @@ namespace Panel.Views
             InitializeComponent();
         }
 
-        // 1. МЕТОД: Проверка на опасные SQL-команды (Пасхалка/Защита)
         private bool IsInputMalicious(string input)
         {
             if (string.IsNullOrWhiteSpace(input)) return false;
@@ -33,7 +31,6 @@ namespace Panel.Views
             return false;
         }
 
-        // 2. МЕТОД: Проверка правильности формата почты
         private bool IsValidEmail(string email)
         {
             return Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
@@ -50,8 +47,6 @@ namespace Panel.Views
                 return;
             }
 
-            // ВАЛИДАЦИЯ 
-            
             if (IsInputMalicious(email) || IsInputMalicious(password))
             {
                 MessageBox.Show("Нельзя так делать ;)", "Атата!", MessageBoxButton.OK, MessageBoxImage.Stop);
@@ -60,7 +55,6 @@ namespace Panel.Views
                 return;
             }
 
-           
             if (!IsValidEmail(email))
             {
                 MessageBox.Show("Введите корректный формат Email (например, admin@world.com).", "Ошибка формата", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -101,6 +95,14 @@ namespace Panel.Views
             {
                 MessageBox.Show($"Ошибка: {ex.Message}", "Критическая ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        // ПЕРЕХОД НА ОКНО РЕГИСТРАЦИИ
+        private void BtnRegister_Click(object sender, RoutedEventArgs e)
+        {
+            RegisterWindow registerWindow = new RegisterWindow();
+            registerWindow.Show();
+            this.Close(); // Закрываем окно входа
         }
     }
 }

@@ -1,0 +1,59 @@
+﻿<Window x:Class="Panel.Views.RegisterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Регистрация - Apex Shop" Height="520" Width="380"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Background="#F5F6FA">
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="СОЗДАТЬ АККАУНТ" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5" Foreground="#2F3640"/>
+        <TextBlock Grid.Row="1" Text="Регистрация нового клиента" FontSize="12" HorizontalAlignment="Center" Margin="0,0,0,20" Foreground="#718093"/>
+
+        <!-- ФИО -->
+        <TextBlock Grid.Row="2" Text="ФИО:" Margin="0,0,0,4" FontWeight="SemiBold" Foreground="#2F3640"/>
+        <TextBox Grid.Row="3" x:Name="txtFullName" Height="32" Margin="0,0,0,12" Padding="5" FontSize="13" MaxLength="100"/>
+
+        <!-- Email -->
+        <TextBlock Grid.Row="4" Text="Email:" Margin="0,0,0,4" FontWeight="SemiBold" Foreground="#2F3640"/>
+        <TextBox Grid.Row="5" x:Name="txtEmail" Height="32" Margin="0,0,0,12" Padding="5" FontSize="13" MaxLength="80"/>
+
+        <!-- Телефон -->
+        <TextBlock Grid.Row="6" Text="Телефон:" Margin="0,0,0,4" FontWeight="SemiBold" Foreground="#2F3640"/>
+        <!-- ТУТ ИСПРАВЛЕНО (Убран Placeholder) -->
+        <TextBox Grid.Row="7" x:Name="txtPhone" Height="32" Margin="0,0,0,12" Padding="5" FontSize="13" MaxLength="20"/>
+
+        <!-- Пароль -->
+        <TextBlock Grid.Row="8" Text="Пароль:" Margin="0,0,0,4" FontWeight="SemiBold" Foreground="#2F3640"/>
+        <PasswordBox Grid.Row="9" x:Name="txtPassword" Height="32" Margin="0,0,0,20" Padding="5" FontSize="13" MaxLength="30"/>
+
+        <!-- Кнопка Зарегистрироваться -->
+        <Button Grid.Row="10" x:Name="btnSubmitRegister" Content="ЗАРЕГИСТРИРОВАТЬСЯ" Height="38" 
+                Background="#4CD137" Foreground="White" FontWeight="Bold" FontSize="13" BorderThickness="0"
+                Cursor="Hand" Click="BtnSubmitRegister_Click">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+
+        <!-- Вернуться назад -->
+        <Button Grid.Row="11" x:Name="btnBack" Content="Назад ко входу" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                Background="Transparent" Foreground="#718093" BorderThickness="0" Cursor="Hand" Click="BtnBack_Click"/>
+    </Grid>
+</Window>

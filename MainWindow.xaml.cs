@@ -135,7 +135,7 @@ namespace Panel.Views
 
         private void BtnLogout_Click(object sender, RoutedEventArgs e)
         {
-            // Очищаем сессию при выходе
+          
             UserSession.CurrentUser = null;
 
             LoginWindow login = new LoginWindow();
